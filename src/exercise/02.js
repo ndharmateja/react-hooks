@@ -3,7 +3,7 @@
 
 import * as React from 'react'
 
-const useLocalStorageState = (
+const useLocalStorage = (
   key,
   initialValue,
   {serialize = JSON.stringify, deserialize = JSON.parse} = {},
@@ -22,7 +22,7 @@ const useLocalStorageState = (
 }
 
 function Greeting({initialName = ''}) {
-  const [name, setName] = useLocalStorageState('name', initialName)
+  const [name, setName] = useLocalStorage('name', initialName)
 
   function handleChange(event) {
     setName(event.target.value)

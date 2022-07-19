@@ -4,27 +4,12 @@
 import * as React from 'react'
 import {fetchPokemon, PokemonInfoFallback, PokemonDataView} from '../pokemon'
 import {PokemonForm} from '../pokemon'
+import {ErrorBoundary} from 'react-error-boundary'
 
 const IDLE = 'idle'
 const PENDING = 'pending'
 const RESOLVED = 'resolved'
 const REJECTED = 'rejected'
-
-class ErrorBoundary extends React.Component {
-  state = {error: null}
-
-  static getDerivedStateFromError(error) {
-    return {error}
-  }
-
-  render() {
-    const {error} = this.state
-    if (error) {
-      return <this.props.FallbackComponent error={error} />
-    }
-    return this.props.children
-  }
-}
 
 function FallbackComponent({error}) {
   return (
@@ -87,7 +72,7 @@ function App() {
       <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
       <hr />
       <div className="pokemon-info">
-        <ErrorBoundary FallbackComponent={FallbackComponent}>
+        <ErrorBoundary key={pokemonName} FallbackComponent={FallbackComponent}>
           <PokemonInfo pokemonName={pokemonName} />
         </ErrorBoundary>
       </div>

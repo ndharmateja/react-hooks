@@ -3,10 +3,6 @@
 
 import * as React from 'react'
 import {fetchPokemon, PokemonInfoFallback, PokemonDataView} from '../pokemon'
-// 🐨 you'll want the following additional things from '../pokemon':
-// fetchPokemon: the function we call to get the pokemon info
-// PokemonInfoFallback: the thing we show while we're loading the pokemon info
-// PokemonDataView: the stuff we use to display the pokemon info
 import {PokemonForm} from '../pokemon'
 
 const IDLE = 'idle'

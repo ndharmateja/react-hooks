@@ -9,31 +9,54 @@ import {fetchPokemon, PokemonInfoFallback, PokemonDataView} from '../pokemon'
 // PokemonDataView: the stuff we use to display the pokemon info
 import {PokemonForm} from '../pokemon'
 
+const IDLE = 'idle'
+const PENDING = 'pending'
+const RESOLVED = 'resolved'
+const REJECTED = 'rejected'
+
 function PokemonInfo({pokemonName}) {
-  const [pokemon, setPokemon] = React.useState(null)
-  const [error, setError] = React.useState(null)
+  const [state, setState] = React.useState({
+    status: 'idle',
+    pokemon: null,
+    error: null,
+  })
+  const {status, pokemon, error} = state
 
   React.useEffect(() => {
     if (!pokemonName) return
 
-    setError(null)
-    setPokemon(null)
+    setState({status: PENDING})
     fetchPokemon(pokemonName).then(
-      pokemonData => setPokemon(pokemonData),
-      error => setError(error),
+      pokemon =>
+        setState({
+          pokemon,
+          status: RESOLVED,
+        }),
+      error =>
+        setState({
+          error,
+          status: REJECTED,
+        }),
     )
   }, [pokemonName])
 
-  if (error)
-    return (
-      <div role="alert">
-        There was an error:{' '}
-        <pre style={{whiteSpace: 'normal'}}>{error.message}</pre>
-      </div>
-    )
-  if (!pokemonName) return <p>Submit a pokemon</p>
-  if (!pokemon) return <PokemonInfoFallback name={pokemonName} />
-  return <PokemonDataView pokemon={pokemon} />
+  switch (status) {
+    case IDLE:
+      return <p>Submit a pokemon</p>
+    case PENDING:
+      return <PokemonInfoFallback name={pokemonName} />
+    case RESOLVED:
+      return <PokemonDataView pokemon={pokemon} />
+    case REJECTED:
+      return (
+        <div role="alert">
+          There was an error:{' '}
+          <pre style={{whiteSpace: 'normal'}}>{error.message}</pre>
+        </div>
+      )
+    default:
+      return null
+  }
 }
 
 function App() {

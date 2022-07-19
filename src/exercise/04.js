@@ -6,10 +6,14 @@ import {useLocalStorageState} from '../utils'
 
 function Board() {
   // 🐨 squares is the state for this component. Add useState for squares
+  const initialSquares = Array(9).fill(null)
   const [squares, setSquares] = useLocalStorageState(
     'ttt-squares',
-    Array(9).fill(null),
+    initialSquares,
   )
+  const winner = calculateWinner(squares)
+  const nextValue = calculateNextValue(squares)
+  const status = calculateStatus(winner, squares, nextValue)
 
   // 🐨 We'll need the following bits of derived state:
   // - nextValue ('X' or 'O')
@@ -24,7 +28,7 @@ function Board() {
     // 🐨 first, if there's already winner or there's already a value at the
     // given square index (like someone clicked a square that's already been
     // clicked), then return early so we don't make any state changes
-    if (calculateWinner(squares)) return
+    if (winner) return
     if (squares[square]) return
     // 🦉 It's typically a bad idea to mutate or directly change state in React.
     // Doing so can lead to subtle bugs that can easily slip into production.
@@ -36,7 +40,7 @@ function Board() {
     // 🐨 set the squares to your copy
     setSquares(prevSquares => {
       const newSquares = [...prevSquares]
-      newSquares[square] = calculateNextValue(squares)
+      newSquares[square] = nextValue
       return newSquares
     })
   }
@@ -44,7 +48,7 @@ function Board() {
   function restart() {
     // 🐨 reset the squares
     // 💰 `Array(9).fill(null)` will do it!
-    setSquares(Array(9).fill(null))
+    setSquares(initialSquares)
   }
 
   function renderSquare(i) {
@@ -58,13 +62,7 @@ function Board() {
   return (
     <div>
       {/* 🐨 put the status in the div below */}
-      <div className="status">
-        {calculateStatus(
-          calculateWinner(squares),
-          squares,
-          calculateNextValue(squares),
-        )}
-      </div>
+      <div className="status">{status}</div>
       <div className="board-row">
         {renderSquare(0)}
         {renderSquare(1)}

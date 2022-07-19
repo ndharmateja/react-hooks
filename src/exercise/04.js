@@ -5,7 +5,7 @@ import * as React from 'react'
 
 function Board() {
   // 🐨 squares is the state for this component. Add useState for squares
-  const squares = Array(9).fill(null)
+  const [squares, setSquares] = React.useState(Array(9).fill(null))
 
   // 🐨 We'll need the following bits of derived state:
   // - nextValue ('X' or 'O')
@@ -20,22 +20,27 @@ function Board() {
     // 🐨 first, if there's already winner or there's already a value at the
     // given square index (like someone clicked a square that's already been
     // clicked), then return early so we don't make any state changes
-    //
+    if (calculateWinner(squares)) return
+    if (squares[square]) return
     // 🦉 It's typically a bad idea to mutate or directly change state in React.
     // Doing so can lead to subtle bugs that can easily slip into production.
     //
     // 🐨 make a copy of the squares array
     // 💰 `[...squares]` will do it!)
-    //
     // 🐨 set the value of the square that was selected
     // 💰 `squaresCopy[square] = nextValue`
-    //
     // 🐨 set the squares to your copy
+    setSquares(prevSquares => {
+      const newSquares = [...prevSquares]
+      newSquares[square] = calculateNextValue(squares)
+      return newSquares
+    })
   }
 
   function restart() {
     // 🐨 reset the squares
     // 💰 `Array(9).fill(null)` will do it!
+    setSquares(Array(9).fill(null))
   }
 
   function renderSquare(i) {
@@ -49,7 +54,13 @@ function Board() {
   return (
     <div>
       {/* 🐨 put the status in the div below */}
-      <div className="status">STATUS</div>
+      <div className="status">
+        {calculateStatus(
+          calculateWinner(squares),
+          squares,
+          calculateNextValue(squares),
+        )}
+      </div>
       <div className="board-row">
         {renderSquare(0)}
         {renderSquare(1)}
@@ -98,6 +109,7 @@ function calculateNextValue(squares) {
 
 // eslint-disable-next-line no-unused-vars
 function calculateWinner(squares) {
+  console.log(JSON.stringify(squares, null, 2))
   const lines = [
     [0, 1, 2],
     [3, 4, 5],

@@ -11,11 +11,12 @@ const PENDING = 'pending'
 const RESOLVED = 'resolved'
 const REJECTED = 'rejected'
 
-function FallbackComponent({error}) {
+function ErrorFallback({error, resetErrorBoundary}) {
   return (
     <div role="alert">
       There was an error:{' '}
       <pre style={{whiteSpace: 'normal'}}>{error.message}</pre>
+      <button onClick={resetErrorBoundary}>Try Again</button>
     </div>
   )
 }
@@ -72,7 +73,10 @@ function App() {
       <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
       <hr />
       <div className="pokemon-info">
-        <ErrorBoundary key={pokemonName} FallbackComponent={FallbackComponent}>
+        <ErrorBoundary
+          onReset={() => setPokemonName('')}
+          FallbackComponent={ErrorFallback}
+        >
           <PokemonInfo pokemonName={pokemonName} />
         </ErrorBoundary>
       </div>

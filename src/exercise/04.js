@@ -2,10 +2,19 @@
 // http://localhost:3000/isolated/exercise/04.js
 
 import * as React from 'react'
+import {useEffect} from 'react'
 
 function Board() {
   // 🐨 squares is the state for this component. Add useState for squares
-  const [squares, setSquares] = React.useState(Array(9).fill(null))
+  const [squares, setSquares] = React.useState(() => {
+    const json = window.localStorage.getItem('ttt-squares')
+    if (json) return JSON.parse(json)
+    return Array(9).fill(null)
+  })
+
+  useEffect(() => {
+    window.localStorage.setItem('ttt-squares', JSON.stringify(squares))
+  }, [squares])
 
   // 🐨 We'll need the following bits of derived state:
   // - nextValue ('X' or 'O')
@@ -109,7 +118,6 @@ function calculateNextValue(squares) {
 
 // eslint-disable-next-line no-unused-vars
 function calculateWinner(squares) {
-  console.log(JSON.stringify(squares, null, 2))
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
